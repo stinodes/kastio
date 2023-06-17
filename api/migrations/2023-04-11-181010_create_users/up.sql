@@ -1,0 +1,5 @@
+CREATE TABLE users (
+    username VARCHAR(50) NOT NULL UNIQUE PRIMARY KEY,
+    email VARCHAR(264) NOT NULL UNIQUE,
+    password VARCHAR(264) NOT NULL
+);

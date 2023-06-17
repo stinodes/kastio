@@ -1,0 +1,56 @@
+name: kastio
+services:
+  react:
+    build:
+      context: react
+      target: development
+    networks:
+      - client-side
+    ports:
+      - 3000:3000
+    volumes:
+      - ./react:/code
+    command: yarn dev
+
+  backend:
+    build:
+      context: api
+      target: development
+    environment:
+      - RUST_LOG=debug
+      - PG_DBNAME=postgres
+      - PG_HOST=db
+      - PG_USER=postgres
+      - PG_PASSWORD=mysecretpassword
+    networks:
+      - client-side
+      - server-side
+    ports:
+      - 8000:8000
+    volumes:
+      - ./api:/code
+      - backend-cache:/code/target
+    depends_on:
+      - db
+    command: cargo watch -x run
+
+  db:
+    image: postgres:12-alpine
+    command: postgres -c 'max_connections=200'
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+    networks:
+      - server-side
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+networks:
+  client-side: {}
+  server-side: {}
+
+volumes:
+  backend-cache: {}
+  db-data: {}

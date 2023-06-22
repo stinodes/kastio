@@ -37,16 +37,12 @@ impl FromRequest for AuthMiddleware {
             return ready(Err(ErrorUnauthorized("You are not logged in.")));
         }
 
-        log::info!("Token is set.");
-
         let claims = match decode_jwt(&token.unwrap()) {
             Ok(c) => c,
             Err(_) => {
                 return ready(Err(ErrorUnauthorized("Invalid Token")));
             }
         };
-
-        log::info!("Claims: {} - {}", claims.sub, claims.email);
 
         let user = UserWithoutPW::from_token(&claims);
 

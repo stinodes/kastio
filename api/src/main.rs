@@ -1,4 +1,5 @@
-use actix_web::{get, web::Data, App, HttpResponse, HttpServer, Responder};
+use actix_cors::Cors;
+use actix_web::{get, http::header, web::Data, App, HttpResponse, HttpServer, Responder};
 use db::create_db_pool;
 use dotenvy::dotenv;
 use handlers::authentication::{get_me, login, register};
@@ -28,6 +29,21 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         let db = create_db_pool();
         App::new()
+            .wrap(
+                Cors::default()
+                    .allowed_origin("http://localhost:3000")
+                    .allowed_methods(vec!["GET", "POST"])
+                    .allowed_headers(vec![
+                        header::AUTHORIZATION,
+                        header::CONTENT_TYPE,
+                        header::ACCEPT,
+                        header::ACCEPT_LANGUAGE,
+                        header::ACCEPT_ENCODING,
+                    ])
+                    .expose_headers(vec!["set-cookie"])
+                    .supports_credentials()
+                    .max_age(3600),
+            )
             .service(hello)
             .service(get_me)
             .service(register)

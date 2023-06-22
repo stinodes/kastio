@@ -1,5 +1,5 @@
 use actix_web::cookie::time::Duration;
-use actix_web::cookie::Cookie;
+use actix_web::cookie::{Cookie, SameSite};
 use actix_web::error::{ErrorBadRequest, ErrorUnauthorized};
 use actix_web::web::{self, Data};
 use actix_web::{get, post, web::Json, HttpResponse, Responder};
@@ -47,7 +47,8 @@ pub async fn login(
 
     let matched_users = users
         .filter(username.eq(&body.username))
-        .load::<UserWithPW>(&mut db)
+        .select(UserWithPW::as_select())
+        .load(&mut db)
         .unwrap_or(vec![]);
 
     let user = match matched_users.get(0) {
@@ -74,7 +75,8 @@ pub async fn login(
     let cookie = Cookie::build("token", token.to_owned())
         .path("/")
         .max_age(Duration::new(60 * 60, 0))
-        .http_only(true)
+        .same_site(SameSite::None)
+        .secure(true)
         .finish();
 
     return Ok(HttpResponse::Ok()

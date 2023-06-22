@@ -1,10 +1,10 @@
 use crate::schema::users;
-use diesel::{Insertable, Queryable};
+use diesel::{Insertable, Queryable, Selectable};
 use serde::{Deserialize, Serialize};
 
 use super::auth::TokenClaims;
 
-#[derive(Debug, Serialize, Deserialize, Queryable, Insertable, Clone)]
+#[derive(Debug, Serialize, Deserialize, Selectable, Queryable, Insertable, Clone)]
 #[diesel(table_name = users)]
 pub struct UserWithPW {
     pub email: String,

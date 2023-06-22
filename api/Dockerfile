@@ -8,7 +8,7 @@ WORKDIR /code
 RUN rustup default nightly 
 RUN cargo init
 RUN cargo install cargo-watch
-RUN cargo install diesel_cli
+RUN cargo install diesel_cli@2.0.0
 COPY ./Cargo.toml /code/Cargo.toml
 COPY ./Cargo.lock /code/Cargo.lock
 # RUN cp src/secret.key.local src/secret.key

@@ -6,6 +6,7 @@ services:
       target: development
     networks:
       - client-side
+      - server-side
     ports:
       - 3000:3000
     volumes:
@@ -49,7 +50,7 @@ services:
 
 networks:
   client-side: {}
-  server-side: {}
+  server-side: { internal: true }
 
 volumes:
   backend-cache: {}
